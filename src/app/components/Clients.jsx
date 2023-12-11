@@ -1,15 +1,34 @@
 "use client";
 import Link from "next/link";
 import { useUserContextProvider } from "../context/UserContext";
-export const UserLoginSignupBtns = () => {
-  const { user, setUser } = useUserContextProvider();
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
-  const logoutHanddler = () => {
-    alert("logout");
+//1. logout and login buttons component for header
+export const UserLoginSignupBtns = () => {
+  const { user, setUser, nutrilizingTheLocalUserData } =
+    useUserContextProvider();
+  const router = useRouter();
+  const logoutHanddler = async () => {
+    // call logout api
+    try {
+      const { data } = await axios.post("http://localhost:3000/api/logout");
+      setUser({});
+      if (data.success) {
+        toast.success(data.msg);
+        router.push("/");
+        nutrilizingTheLocalUserData();
+      } else {
+        throw new Error("something went wrong while logout! refresh the page");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
   return (
     <>
-      {user.id ? (
+      {user._id ? (
         <button onClick={logoutHanddler} className="btn2">
           logout
         </button>
@@ -26,8 +45,21 @@ export const UserLoginSignupBtns = () => {
     </>
   );
 };
-
-export const TodoButtons = ({id}) => {
+//2. protected rouets menu links for header
+export const ProtectedMenuLinks = () => {
+  const { user } = useUserContextProvider();
+  return (
+    <>
+      {user._id && (
+        <>
+          <Link href="/">Home</Link>
+          <Link href="/notes">Notes</Link>
+        </>
+      )}
+    </>
+  );
+};
+export const TodoButtons = ({ id }) => {
   return (
     <>
       <button className="btn1">Delete</button>

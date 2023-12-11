@@ -5,14 +5,10 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useUserContextProvider } from "../context/UserContext";
-import cookieCutter from "cookie-cutter";
 
 // to get the cookie value from the serverside
 
-
 const LoginForm = () => {
-  const cookie = cookieCutter.get("authToken");
-  console.log(cookie);
   const router = useRouter();
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState(false);
@@ -20,6 +16,7 @@ const LoginForm = () => {
     email: "",
     password: "",
   });
+  const { user, setUser } = useUserContextProvider();
   const handdleSubmit = async (e) => {
     e.preventDefault();
     const { email, password } = formInputs;
@@ -36,12 +33,13 @@ const LoginForm = () => {
       );
 
       if (data.success) {
+        setUser({ ...data.result });
+        //set data inside the localStorage
+        localStorage.setItem("user",JSON.stringify({ ...data.result }))
         toast.success(data.msg);
         router.push("/");
 
         //store the userDetails in the context Api
-        
-        // useUserContextProvider()
       } else {
         toast.error(data.msg);
       }
