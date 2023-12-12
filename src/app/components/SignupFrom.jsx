@@ -4,8 +4,10 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useUserContextProvider } from "../context/UserContext";
 
 const SignupFrom = () => {
+  const { setUser } = useUserContextProvider();
   const router = useRouter();
   const [formInputs, setFormInputs] = useState({
     name: "",
@@ -32,6 +34,7 @@ const SignupFrom = () => {
         formInputs
       );
       if (data.success) {
+        setUser({ ...data.result });
         toast.success("you have signup successfully");
         router.push("/");
       } else {

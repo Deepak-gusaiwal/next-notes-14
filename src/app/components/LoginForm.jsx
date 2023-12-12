@@ -9,6 +9,7 @@ import { useUserContextProvider } from "../context/UserContext";
 // to get the cookie value from the serverside
 
 const LoginForm = () => {
+  const { setUser } = useUserContextProvider();
   const router = useRouter();
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState(false);
@@ -16,7 +17,7 @@ const LoginForm = () => {
     email: "",
     password: "",
   });
-  const { user, setUser } = useUserContextProvider();
+
   const handdleSubmit = async (e) => {
     e.preventDefault();
     const { email, password } = formInputs;
@@ -33,13 +34,10 @@ const LoginForm = () => {
       );
 
       if (data.success) {
+        //store the userDetails in the context Api
         setUser({ ...data.result });
-        //set data inside the localStorage
-        localStorage.setItem("user",JSON.stringify({ ...data.result }))
         toast.success(data.msg);
         router.push("/");
-
-        //store the userDetails in the context Api
       } else {
         toast.error(data.msg);
       }
@@ -50,6 +48,14 @@ const LoginForm = () => {
   return (
     <div className="max-w-[600px] mx-auto bg-slate-200 p-2 my-2 rounded ">
       <h2 className="heading text-center">login</h2>
+      <button
+        className="btn2"
+        onClick={() => {
+          router.push("/contact");
+        }}
+      >
+        redirect
+      </button>
 
       <form onSubmit={handdleSubmit} className="flex flex-col gap-2 ">
         {error && !formInputs.email && (
