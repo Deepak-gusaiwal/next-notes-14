@@ -8,14 +8,19 @@ export const metadata = {
 };
 import { UserContextProvider } from "./context/UserContext";
 import { ToastContainer } from "react-toastify";
+import { NotesContextProvider } from "./context/NotesContext";
+import UpdateModal from "./components/UpdateModal";
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
         <UserContextProvider>
-          <ToastContainer />
-          <Header />
-          {children}
+          <NotesContextProvider>
+            <ToastContainer />
+            <Header />
+            <UpdateModal/>
+            {children}
+          </NotesContextProvider>
         </UserContextProvider>
       </body>
     </html>

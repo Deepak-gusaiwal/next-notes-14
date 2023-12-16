@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useUserContextProvider } from "../context/UserContext";
+import { createUser } from "../services/userService";
 
 const SignupFrom = () => {
   const { setUser } = useUserContextProvider();
@@ -29,10 +30,7 @@ const SignupFrom = () => {
 
     //register the user
     try {
-      var { data } = await axios.post(
-        "http://localhost:3000/api/users",
-        formInputs
-      );
+      const data = await createUser(formInputs);
       if (data.success) {
         setUser({ ...data.result });
         toast.success("you have signup successfully");

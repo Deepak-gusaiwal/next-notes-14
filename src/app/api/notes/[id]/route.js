@@ -2,6 +2,7 @@ const { noteModel } = require("@/models/noteModel");
 import { connection } from "@/db/connection";
 import { userModel } from "@/models/userModel";
 import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 connection();
 // get single note
 export const GET = async (req, { params }) => {
@@ -31,6 +32,20 @@ export const GET = async (req, { params }) => {
 export const PUT = async (req, { params }) => {
   const id = params.id;
   try {
+    const token = req.cookies.get("authToken")?.value;
+    if (!token) {
+      console.log("he has no token");
+      throw new Error("token is not found");
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded._id;
+    const isNoteExists = await noteModel.findById(id);
+    if (!isNoteExists) {
+      throw new Error("note is note foudn");
+    }
+    if (isNoteExists.userId.toString() !== userId) {
+      throw new Error("you are not allowed to do that");
+    }
     const clientInputs = await req.json();
     const note = await noteModel.findByIdAndUpdate(
       id,
@@ -62,8 +77,19 @@ export const DELETE = async (req, { params }) => {
   const id = params.id;
 
   try {
+    const token = req.cookies.get("authToken")?.value;
+    if (!token) {
+      console.log("he has no token");
+      throw new Error("token is not found");
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded._id;
+    //get note
+    const note = await noteModel.findById(id);
+    if (note.userId.toString() !== userId) {
+      throw new Error("you are not allowed to do that");
+    }
     const deletedNote = await noteModel.findByIdAndDelete(id);
-    const userId = deletedNote.userId;
     const user = await userModel.findById(userId);
     user.notes.pull(deletedNote._id);
     await user.save();

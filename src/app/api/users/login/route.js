@@ -9,7 +9,6 @@ export const POST = async (req) => {
   try {
     const { email, password } = await req.json();
     const user = await userModel.findOne({ email }).select("+password");
-
     if (!user) {
       throw new Error("user note found!");
     }
@@ -19,21 +18,20 @@ export const POST = async (req) => {
     if (!isPasswordValid) {
       throw new Error("Invalid Credentials!");
     }
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h", // Set expiration time here
-    });
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
 
-    const { password:password2, ...filterdUserData } = user._doc;
+    const { password: password2, ...filterdUserData } = user._doc;
     const response = NextResponse.json({
       msg: "you have been logged in",
       success: true,
       token,
       result: filterdUserData,
     });
+    //if the token is expired it will automatically remove the cookie from the browser
     response.cookies.set("authToken", token, {
       secure: true, // Only send over HTTPS connections
-      maxAge: 3600, // Set cookie expiration time in seconds (1 hour)
-      // httpOnly: true, // Prevent access from client-side JavaScript
+      // maxAge: 10, // Set cookie expiration time in seconds (1 hour)
+      httpsOnly: true, // Prevent access from client-side JavaScript
       // sameSite: "strict", // Prevent Cross-Site Request Forgery attacks
       //path: "/", // Set cookie path
     });

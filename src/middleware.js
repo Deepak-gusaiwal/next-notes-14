@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-
 // This function can be marked `async` if using `await` inside
 export function middleware(request) {
   const pathName = request.nextUrl.pathname;
@@ -11,11 +10,7 @@ export function middleware(request) {
   if (checkRoute("/api/users/login") || checkRoute("/api/users")) {
     return;
   }
-  if (token) {
-    console.log("he has the token", token);
-  } else {
-    console.log("he does not have the token", token);
-  }
+
   if (checkRoute("/login") || checkRoute("/signup")) {
     if (token) {
       return NextResponse.redirect(new URL("/", request.url));
@@ -25,7 +20,6 @@ export function middleware(request) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }
- 
 }
 
 // See "Matching Paths" below to learn more

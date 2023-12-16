@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useUserContextProvider } from "../context/UserContext";
+import { loginUser } from "../services/userService";
 
 // to get the cookie value from the serverside
 
@@ -28,11 +29,7 @@ const LoginForm = () => {
 
     //call login user api
     try {
-      const { data } = await axios.post(
-        "http://localhost:3000/api/users/login",
-        formInputs
-      );
-
+      const data = await loginUser(formInputs);
       if (data.success) {
         //store the userDetails in the context Api
         setUser({ ...data.result });
@@ -48,15 +45,6 @@ const LoginForm = () => {
   return (
     <div className="max-w-[600px] mx-auto bg-slate-200 p-2 my-2 rounded ">
       <h2 className="heading text-center">login</h2>
-      <button
-        className="btn2"
-        onClick={() => {
-          router.push("/contact");
-        }}
-      >
-        redirect
-      </button>
-
       <form onSubmit={handdleSubmit} className="flex flex-col gap-2 ">
         {error && !formInputs.email && (
           <p className="font-semibold px-2 text-red-500 capitalize  ">
