@@ -9,7 +9,7 @@ import { useNotesContextProvider } from "../context/NotesContext";
 import { MdDeleteForever } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import Swal from "sweetalert2";
-import { useState } from "react";
+import { logoutUser } from "../services/userService";
 
 //1. logout and login buttons component for header
 export const UserLoginSignupBtns = () => {
@@ -18,7 +18,7 @@ export const UserLoginSignupBtns = () => {
   const logoutHanddler = async () => {
     // call logout api
     try {
-      const { data } = await axios.post("http://localhost:3000/api/logout");
+      const data =await logoutUser();
       if (data.success) {
         setUser({});
         toast.success(data.msg);

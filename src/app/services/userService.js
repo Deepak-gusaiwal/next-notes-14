@@ -12,3 +12,7 @@ export const currentUser = async () => {
   const { data } = await axiosCreator.get("/api/users/current");
   return data;
 };
+export const logoutUser =async()=>{
+  const { data } = await axiosCreator.post("/api/logout");
+  return data;
+}
